@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PRACTICK3.Service
 {
-    public interface IBoardgameRepository
+   public  interface IBoardgameRepository : IDisposable
     {
         Task<Boardgame> GetGameAsync(int id);
         Task<Boardgame> AddGamesAsync(Boardgame bordgame);

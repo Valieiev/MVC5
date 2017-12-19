@@ -1,8 +1,11 @@
-﻿using PRACTICK3.Models;
+﻿using PRACTICK3.Common;
+using PRACTICK3.Models;
+using PRACTICK3.Repositories;
 using PRACTICK3.Service;
 using PRACTICK3.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,16 +15,16 @@ namespace PRACTICK3.Controllers
 {
     public class BoardGameController : Controller
     {
-        private readonly IBoardgameService _boardService;
-     
 
-        public BoardGameController(IBoardgameService boardService)
+        IBoardgameRepository _boardService;
+
+        public BoardGameController()
         {
-            _boardService =  boardService;
+            _boardService = new BoardgameRepository();
         }
         public async  Task<ActionResult> Index()
         {
-            var boardgame = await _boardService.GetGamesAsync();
+            var boardgame = await  _boardService.GetGamesAsync();
             return View(boardgame);
         }
         public ActionResult AddGame()
@@ -30,7 +33,7 @@ namespace PRACTICK3.Controllers
             {
                 Title = "Add new Game",
                 AddButtonTitle = "Add",
-                RedirectUrl = Url.Action("Idex", "BoardGame")
+                RedirectUrl = Url.Action("Index", "BoardGame")
 
             };
             return View(boardgameViewModel);
@@ -39,7 +42,7 @@ namespace PRACTICK3.Controllers
         {
             var boardgame = await _boardService.GetGameAsync(id);
 
-            return View(new BoardgameViewModel { Id = boardgame.ProductId, Name = boardgame.ProductName });
+            return View(new BoardgameViewModel { Id = boardgame.ProductId, Description = boardgame.Description, ProductName = boardgame.ProductName, Coast=boardgame.Coast , Count = boardgame.Count });
         }
 
         [HttpPost]
@@ -54,7 +57,10 @@ namespace PRACTICK3.Controllers
             if (boardgame != null)
             {
                 boardgame.ProductName = boardgameViewModel.Name;
-
+                boardgame.Description = boardgameViewModel.Description;
+                boardgame.ProductName = boardgameViewModel.ProductName;
+                boardgame.Coast = boardgameViewModel.Coast;
+                boardgame.Count = boardgameViewModel.Count;
                 await _boardService.UpdategameAsync(boardgame);
             }
 
@@ -67,7 +73,7 @@ namespace PRACTICK3.Controllers
 
             var studentViewModel = new BoardgameViewModel
             {
-                Title = "Edit Student",
+                Title = "Edit Game",
                 AddButtonTitle = "Save",
                 RedirectUrl = Url.Action("Index", "BoardGame"),
                 Name = boardgame.ProductName,
@@ -85,7 +91,7 @@ namespace PRACTICK3.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddNewStudent(BoardgameViewModel boardViewModel, string redirectUrl)
+        public async Task<ActionResult> AddNewGame(BoardgameViewModel boardViewModel, string redirectUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +100,12 @@ namespace PRACTICK3.Controllers
 
             var boardgame = new Boardgame
             {
-                ProductName = boardViewModel.Name
+                ProductName = boardViewModel.Name,
+                Coast = boardViewModel.Coast,
+                Rang = boardViewModel.Rang,
+                Description = boardViewModel.Description,
+                Count = boardViewModel.Count
+                
             };
 
             await _boardService.AddGamesAsync(boardgame);

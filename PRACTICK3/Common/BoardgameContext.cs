@@ -1,4 +1,5 @@
 ﻿using PRACTICK3.Models;
+using PRACTICK3.Service;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -12,6 +13,7 @@ namespace PRACTICK3.Common
     {
         public BoardgameContext() : base("DefaultConnection")
         {
+           
         }
         public   DbSet<Boardgame> Boardgames { get; set; }
     }

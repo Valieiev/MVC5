@@ -66,5 +66,28 @@ namespace PRACTICK3.Repositories
             }
             return boardgame;
         }
+
+        private bool disposed = false;
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    using (var boardgameContext = new BoardgameContext())
+                    {
+                        boardgameContext.Dispose();
+                    }
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
